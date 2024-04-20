@@ -1,6 +1,6 @@
 use anyhow::Context;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-use std::io::{StdoutLock, Write};
+use std::io::{BufRead, StdoutLock, Write};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Message<Payload> {
@@ -49,12 +49,19 @@ where
     P: DeserializeOwned,
     N: Node<S, P>,
 {
-    let mut stdin = std::io::stdin().lock();
+    let stdin = std::io::stdin().lock();
+    let mut stdin = stdin.lines();
     let mut stdout = std::io::stdout().lock();
 
-    // Write Init Msg to the Output
-    let init_msg: Message<InitPayload> =
-        serde_json::from_reader(&mut stdin).context("init message should be deserialized")?;
+    // Deserializing entire String of the line
+    let init_msg: Message<InitPayload> = serde_json::from_str(
+        &stdin
+            .next()
+            .expect("no init message recieved")
+            .context("failed to read init message from stdin")?,
+    )
+    .context("init msg could not be deserialized")?;
+
     let InitPayload::Init(init) = init_msg.body.payload else {
         panic!("first message should be init");
     };
@@ -75,9 +82,9 @@ where
     stdout.write_all(b"\n").context("write trailing newline")?;
 
     // Listen to stdin and write the Payload for that State
-    let inputs = serde_json::Deserializer::from_reader(stdin).into_iter::<Message<P>>();
-    for input in inputs {
-        let input = input.context("error deserializing input")?;
+    for line in stdin {
+        let line = line.context("input could not be read")?;
+        let input: Message<P> = serde_json::from_str(&line).context("error deserializing input")?;
         node.step(input, &mut stdout)
             .context("Node step function failed")?;
     }
