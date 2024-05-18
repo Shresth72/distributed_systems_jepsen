@@ -33,7 +33,7 @@ impl Node<(), Payload> for GrowCounterNode {
     fn from_init(
         _state: (),
         init: Init,
-        tx: std::sync::mpsc::Sender<Event<Payload>>,
+        _tx: std::sync::mpsc::Sender<Event<Payload>>,
     ) -> anyhow::Result<Self>
     where
         Self: Sized,
@@ -57,6 +57,7 @@ impl Node<(), Payload> for GrowCounterNode {
                 match reply.body.payload {
                     Payload::Add { delta } => {
                         // Atomically increment the counter
+                        // This is not global to all nodes and only within the node
                         let mut counter = GLOBAL_COUNTER.lock().unwrap();
                         counter.fetch_add(delta, Ordering::SeqCst);
 
