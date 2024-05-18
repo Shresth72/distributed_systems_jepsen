@@ -2,7 +2,7 @@ use distributed_systems::*;
 
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
-use std::io::{StdoutLock, Write};
+use std::io::StdoutLock;
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
@@ -47,9 +47,9 @@ impl Node<(), Payload> for UniqueNode {
                 let guid = format!("{}-{}", self.node, self.id);
                 reply.body.payload = Payload::GenerateOk { guid };
 
-                serde_json::to_writer(&mut *output, &reply)
-                    .context("serialize response to generate")?;
-                output.write_all(b"\n").context("write trailing newline")?;
+                reply
+                    .send(&mut *output)
+                    .context("serialized response to generate")?;
             }
             Payload::GenerateOk { .. } => {}
         };

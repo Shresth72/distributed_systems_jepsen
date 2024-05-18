@@ -1,6 +1,15 @@
 use anyhow::Context;
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
-use std::io::{BufRead, StdoutLock, Write};
+use std::{
+    io::{BufRead, StdoutLock, Write},
+    sync::{atomic::AtomicUsize, Arc, Mutex},
+};
+
+// Not implementing Fully Globally Unique Grow Counter, as it needs Maelstrom's API
+// for fetching Sequentially Consistent Counter value
+lazy_static::lazy_static! {
+    pub static ref GLOBAL_COUNTER: Arc<Mutex<AtomicUsize>> = Arc::new(Mutex::new(AtomicUsize::new(0)));
+}
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Message<Payload> {

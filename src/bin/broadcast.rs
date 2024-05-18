@@ -88,6 +88,7 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
                             .iter()
                             .copied()
                             .partition(|m| known_to_n.contains(m));
+
                         // if we know that n knows m, we don't tell n that _we_ know m, so n will
                         // send us m for all eternity. so, we include a couple of extra `m`s so
                         // they gradually know all the things that we know without sending lots of
@@ -95,6 +96,7 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
                         // we cap the number of extraneous `m`s we include to be at most 10% of the
                         // number of `m`s` we _have_ to include to avoid excessive overhead.
                         let mut rng = rand::thread_rng();
+
                         let additional_cap = (10 * notify_of.len() / 100) as u32;
                         notify_of.extend(already_known.iter().filter(|_| {
                             rng.gen_ratio(
@@ -102,6 +104,7 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
                                 already_known.len() as u32,
                             )
                         }));
+
                         Message {
                             src: self.node.clone(),
                             dst: n.clone(),
@@ -116,8 +119,10 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
                     }
                 }
             },
+
             Event::Message(input) => {
                 let mut reply = input.into_reply(Some(&mut self.id));
+
                 match reply.body.payload {
                     Payload::Gossip { seen } => {
                         self.known
