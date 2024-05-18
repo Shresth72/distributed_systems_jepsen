@@ -9,17 +9,17 @@ use std::{
     time::Duration,
 };
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(tag = "type")]
 #[serde(rename_all = "snake_case")]
 enum Payload {
-    Braodcast {
+    Broadcast {
         message: usize,
     },
-    BraodcastOk,
+    BroadcastOk,
     Read,
     ReadOk {
-        message: HashSet<usize>,
+        messages: HashSet<usize>,
     },
     Topology {
         topology: HashMap<String, Vec<String>>,
@@ -34,15 +34,12 @@ enum InjectedPayload {
     Gossip,
 }
 
-// Gossip Protocol Optimization
 struct BroadcastNode {
     node: String,
     id: usize,
     messages: HashSet<usize>,
-    neighborhood: Vec<String>,
-
-    // Node Identifier -> Messages this Node knows that the other Nodes know
     known: HashMap<String, HashSet<usize>>,
+    neighborhood: Vec<String>,
 }
 
 impl Node<(), Payload, InjectedPayload> for BroadcastNode {
@@ -50,12 +47,10 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
         _state: (),
         init: Init,
         tx: std::sync::mpsc::Sender<Event<Payload, InjectedPayload>>,
-    ) -> anyhow::Result<Self>
-    where
-        Self: Sized,
-    {
+    ) -> anyhow::Result<Self> {
         std::thread::spawn(move || {
             // generate gossip events
+            // TODO: handle EOF signal
             loop {
                 std::thread::sleep(Duration::from_millis(300));
                 if let Err(_) = tx.send(Event::Injected(InjectedPayload::Gossip)) {
@@ -65,16 +60,15 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
         });
 
         Ok(Self {
-            id: 1,
             node: init.node_id,
+            id: 1,
             messages: HashSet::new(),
-            neighborhood: Vec::new(),
-
             known: init
                 .node_ids
                 .into_iter()
                 .map(|nid| (nid, HashSet::new()))
                 .collect(),
+            neighborhood: Vec::new(),
         })
     }
 
@@ -85,7 +79,6 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
     ) -> anyhow::Result<()> {
         match input {
             Event::EOF => {}
-
             Event::Injected(payload) => match payload {
                 InjectedPayload::Gossip => {
                     for n in &self.neighborhood {
@@ -94,20 +87,13 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
                             .messages
                             .iter()
                             .copied()
-                            .partition(|m| !known_to_n.contains(m));
-
-                        //------- SMARTER GOSSIP -------- //
-
-                        /*
-                        If we know that n knows m, we don't tell n that _we_ know m, so n will
-                        send us m for all eternity. so, we include a couple of extra `m`s so
-                        they gradually know all the things that we know without sending lots of
-                        extra stuff each time.
-
-                        We cap the number of extraneous `m`s we include to be at most 10% of the
-                        number of `m`s` we _have_ to include to avoid excessive overhead
-                        */
-
+                            .partition(|m| known_to_n.contains(m));
+                        // if we know that n knows m, we don't tell n that _we_ know m, so n will
+                        // send us m for all eternity. so, we include a couple of extra `m`s so
+                        // they gradually know all the things that we know without sending lots of
+                        // extra stuff each time.
+                        // we cap the number of extraneous `m`s we include to be at most 10% of the
+                        // number of `m`s` we _have_ to include to avoid excessive overhead.
                         let mut rng = rand::thread_rng();
                         let additional_cap = (10 * notify_of.len() / 100) as u32;
                         notify_of.extend(already_known.iter().filter(|_| {
@@ -116,7 +102,6 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
                                 already_known.len() as u32,
                             )
                         }));
-
                         Message {
                             src: self.node.clone(),
                             dst: n.clone(),
@@ -128,14 +113,11 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
                         }
                         .send(&mut *output)
                         .with_context(|| format!("gossip to {}", n))?;
-                        self.id += 1;
                     }
                 }
             },
-
             Event::Message(input) => {
                 let mut reply = input.into_reply(Some(&mut self.id));
-
                 match reply.body.payload {
                     Payload::Gossip { seen } => {
                         self.known
@@ -144,36 +126,28 @@ impl Node<(), Payload, InjectedPayload> for BroadcastNode {
                             .extend(seen.iter().copied());
                         self.messages.extend(seen);
                     }
-
-                    Payload::Braodcast { message } => {
+                    Payload::Broadcast { message } => {
                         self.messages.insert(message);
-                        reply.body.payload = Payload::BraodcastOk;
-
+                        reply.body.payload = Payload::BroadcastOk;
                         reply.send(&mut *output).context("reply to broadcast")?;
                     }
-
                     Payload::Read => {
                         reply.body.payload = Payload::ReadOk {
-                            message: self.messages.clone(),
+                            messages: self.messages.clone(),
                         };
-
                         reply.send(&mut *output).context("reply to read")?;
                     }
-
                     Payload::Topology { mut topology } => {
                         self.neighborhood = topology
                             .remove(&self.node)
                             .unwrap_or_else(|| panic!("no topology given for node {}", self.node));
                         reply.body.payload = Payload::TopologyOk;
-
                         reply.send(&mut *output).context("reply to topology")?;
                     }
-
-                    Payload::BraodcastOk | Payload::ReadOk { .. } | Payload::TopologyOk => {}
-                };
+                    Payload::BroadcastOk | Payload::ReadOk { .. } | Payload::TopologyOk => {}
+                }
             }
         }
-
         Ok(())
     }
 }
