@@ -4,7 +4,7 @@ use distributed_systems::*;
 
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, fmt::Debug, io::StdoutLock, usize};
+use std::{borrow::Cow, collections::HashMap, fmt::Debug, io::StdoutLock, usize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
@@ -89,7 +89,7 @@ impl Node<(), Payload> for KafkaNode {
                 entry.push(msg);
 
                 reply.body.payload = Payload::SendOk { offset: new_offset };
-                reply.send(&mut *output).context("reply to broadcast")?;
+                // reply.send(&mut *output).context("reply to broadcast")?;
             }
 
             Payload::Poll { offsets } => {
@@ -116,7 +116,7 @@ impl Node<(), Payload> for KafkaNode {
                     .collect();
 
                 reply.body.payload = Payload::PollOk { messages: log_msgs };
-                reply.send(&mut *output).context("reply to broadcast")?;
+                // reply.send(&mut *output).context("reply to broadcast")?;
             }
 
             Payload::CommitOffsets { offsets } => {
@@ -125,7 +125,7 @@ impl Node<(), Payload> for KafkaNode {
                 }
 
                 reply.body.payload = Payload::CommitOffsetsOk;
-                reply.send(&mut *output).context("reply to broadcast")?;
+                // reply.send(&mut *output).context("reply to broadcast")?;
             }
 
             Payload::ListCommittedOffsets { keys } => {
@@ -137,11 +137,13 @@ impl Node<(), Payload> for KafkaNode {
                 }
 
                 reply.body.payload = Payload::ListCommittedOffsetsOk { offsets };
-                reply.send(&mut *output).context("reply to broadcast")?;
+                // reply.send(&mut *output).context("reply to broadcast")?;
             }
 
             _ => {}
         };
+
+        reply.send(output)?;
 
         Ok(())
     }
