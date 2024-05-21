@@ -4,15 +4,8 @@ use distributed_systems::*;
 
 use anyhow::Context;
 use core::panic;
-use serde::{de::value, Deserialize, Serialize};
-use std::{
-    io::StdoutLock,
-    sync::{
-        atomic::{AtomicUsize, Ordering},
-        Arc,
-    },
-    time::Duration,
-};
+use serde::{Deserialize, Serialize};
+use std::{io::StdoutLock, net::UdpSocket, sync::atomic::Ordering, usize};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(tag = "type")]
@@ -45,6 +38,9 @@ impl Node<(), Payload> for GrowCounterNode {
     }
 
     fn step(&mut self, input: Event<Payload>, output: &mut StdoutLock) -> anyhow::Result<()> {
+        let socket = UdpSocket::bind("0.0.0.0:0")?;
+        socket.connect("127.0.0.1:5005")?;
+
         match input {
             Event::EOF => {}
             Event::Injected(..) => {
@@ -58,8 +54,14 @@ impl Node<(), Payload> for GrowCounterNode {
                     Payload::Add { delta } => {
                         // Atomically increment the counter
                         // This is not global to all nodes and only within the node
-                        let mut counter = GLOBAL_COUNTER.lock().unwrap();
-                        counter.fetch_add(delta, Ordering::SeqCst);
+                        // let mut counter = GLOBAL_COUNTER.lock().unwrap();
+                        // counter.fetch_add(delta, Ordering::SeqCst);
+
+                        let req = [delta as u8; 1];
+                        socket.send(&req)?;
+
+                        // let mut buf = [0u8; 8];
+                        // socket.recv(&mut buf)?;
 
                         reply.body.payload = Payload::AddOk;
                         reply
@@ -69,8 +71,16 @@ impl Node<(), Payload> for GrowCounterNode {
 
                     Payload::Read => {
                         // Automatically read the current value of the counter
-                        let counter = GLOBAL_COUNTER.lock().unwrap();
-                        let current_value = counter.load(Ordering::SeqCst);
+                        // let counter = GLOBAL_COUNTER.lock().unwrap();
+                        // let current_value = counter.load(Ordering::SeqCst);
+
+                        let req = [0u8; 1];
+                        socket.send(&req)?;
+
+                        let mut buf = [0u8; 8];
+                        socket.recv(&mut buf)?;
+
+                        let current_value = usize::from_be_bytes(buf);
 
                         reply.body.payload = Payload::ReadOk {
                             value: current_value,
