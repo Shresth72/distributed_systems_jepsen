@@ -56,8 +56,7 @@ impl Node<(), Payload> for GrowCounterNode {
                         // This is not global to all nodes and only within the node
                         // let mut counter = GLOBAL_COUNTER.lock().unwrap();
                         // counter.fetch_add(delta, Ordering::SeqCst);
-
-                        let req = [delta as u8; 1];
+                        let req = [delta as u8];
                         socket.send(&req)?;
 
                         // let mut buf = [0u8; 8];
