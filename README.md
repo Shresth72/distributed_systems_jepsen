@@ -37,7 +37,7 @@ This is a Node implementation for a Distributed System based on <a href="https:/
 
 ### About <a name = "about"></a>
 
-An implementation of challenges on the [fly.io](https://fly.io/dist-sys/1/), which is build on Jepsen. Nodes for Distributed Systems are built in Rust binaries, that accepts failures and verification requests from the Maelstrom tester.
+An implementation of challenges on the [fly.io](https://fly.io/dist-sys/1/), which is built on Jepsen. Nodes for Distributed Systems are built in Rust binaries, that accepts failures and verification requests from the Maelstrom tester.
 
 <!-- ### 🏁 Getting Started <a name = "getting_started"></a> -->
 <!---->
@@ -74,7 +74,7 @@ brew install openjdk graphviz gnuplot
 ```bash
 wget https://github.com/jepsen-io/maelstrom/releases/download/v0.2.3/maelstrom.tar.bz2
 
-tar -xvjf maelstrom.tar.bz2V
+tar -xvjf maelstrom.tar.bz2
 ```
 
 ## 🔧 Running the tests <a name = "tests"></a>
@@ -131,6 +131,8 @@ cargo run --bin log_server
 - [Tokio](https://tokio.rs/) for the UDP Key Value Store Server
 - [Maelstrom](https://github.com/jepsen-io/maelstrom) for Testing
 
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
+## Acknowledgements <a name = "acknowledgement"></a>
+
+Go follow him now, the best rust guy
 
 - John Gjenset - [Johnhoo](https://www.youtube.com/@jonhoo)
