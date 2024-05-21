@@ -1,4 +1,4 @@
-<h2 align="">Jepsen Based Distributed Systems Implementation</h2>
+<h1 align="">Jepsen Based Distributed Systems Implementation</h1>
 
 <!--
 <p align="center">
@@ -35,7 +35,7 @@ This is a Node implementation for a Distributed System based on <a href="https:/
 
 -->
 
-### 🧐 About <a name = "about"></a>
+### About <a name = "about"></a>
 
 An implementation of challenges on the [fly.io](https://fly.io/dist-sys/1/), which is build on Jepsen. Nodes for Distributed Systems are built in Rust binaries, that accepts failures and verification requests from the Maelstrom tester.
 
