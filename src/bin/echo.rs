@@ -17,6 +17,7 @@ struct EchoNode {
     id: usize,
 }
 
+// Echo Message RPC: {"src":"n1","dest":"n2","body":{"type":"echo","msg_id":1,"echo":"Hello World"}}
 impl Node<(), Payload> for EchoNode {
     fn from_init(
         _state: (),

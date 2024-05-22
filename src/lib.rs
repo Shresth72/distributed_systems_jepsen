@@ -5,8 +5,6 @@ use std::{
     sync::{atomic::AtomicUsize, Arc, Mutex},
 };
 
-// Not implementing Fully Globally Unique Grow Counter, as it needs Maelstrom's API
-// for fetching Sequentially Consistent Counter value
 lazy_static::lazy_static! {
     pub static ref GLOBAL_COUNTER: Arc<Mutex<AtomicUsize>> = Arc::new(Mutex::new(AtomicUsize::new(0)));
 }
@@ -70,6 +68,7 @@ enum InitPayload {
     InitOk,
 }
 
+// Init Message RPC: {"src":"n1","dest":"n2","body":{"type":"init","node_id":"n1","node_ids":["n1","n2"]}}
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Init {
     pub node_id: String,
