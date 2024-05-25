@@ -1,12 +1,10 @@
-#![allow(unused)]
-
-use distributed_systems::*;
-
 use anyhow::Context;
+use distributed_systems::*;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, io::StdoutLock};
+use std::{collections::HashMap, io::StdoutLock, sync::Mutex};
 
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(untagged)]
 enum TxnElement {
     Str(String),
     USize(usize),
@@ -18,7 +16,6 @@ enum TxnElement {
 #[serde(rename_all = "snake_case")]
 enum Payload {
     Txn {
-        msg_id: usize,
         txn: Vec<Vec<TxnElement>>,
     },
     TxnOk {
@@ -28,10 +25,14 @@ enum Payload {
     },
 }
 
+// {"src":"n1","dest":"n2","body":{"type":"init","node_id":"n1","node_ids":["n1","n2"]}}
+// {"src":"n1","dest":"n1","body":{"type":"txn","msg_id":3,"txn":[["r",1,null],["w",1,6],["w",2,9]]}}
+// {"src":"n1","dest":"n1","body":{"type":"txn","msg_id":3,"txn":[["w",8,2],["r",9,null],["r",9,null],["r",8,null]]}}
+
 struct TransactionNode {
-    node: String,
+    _node: String,
     id: usize,
-    msgs: HashMap<usize, Vec<Vec<TxnElement>>>,
+    store: Mutex<HashMap<usize, TxnElement>>,
 }
 
 impl Node<(), Payload> for TransactionNode {
@@ -45,8 +46,8 @@ impl Node<(), Payload> for TransactionNode {
     {
         Ok(TransactionNode {
             id: 1,
-            node: init.node_id,
-            msgs: HashMap::new(),
+            _node: init.node_id,
+            store: Mutex::new(HashMap::new()),
         })
     }
 
@@ -58,22 +59,36 @@ impl Node<(), Payload> for TransactionNode {
         let mut reply = input.into_reply(Some(&mut self.id));
 
         match reply.body.payload {
-            Payload::Txn { msg_id, mut txn } => {
-                for elem in &mut txn {
-                    match elem.get_mut(0) {
-                        Some(e) if *e == TxnElement::Str("r".to_string()) => {
-                            elem[2] = TxnElement::USize(msg_id);
+            Payload::Txn { ref mut txn } => {
+                let mut store = self.store.lock().unwrap();
+                for operation in txn.iter_mut() {
+                    match operation.as_slice() {
+                        [TxnElement::Str(ref op), TxnElement::USize(key), TxnElement::None]
+                            if op == "r" =>
+                        {
+                            let value = store.get(key).cloned().unwrap_or(TxnElement::None);
+                            *operation = vec![
+                                TxnElement::Str("r".to_string()),
+                                TxnElement::USize(*key),
+                                value,
+                            ];
                         }
+
+                        [TxnElement::Str(ref op), TxnElement::USize(key), TxnElement::USize(value)]
+                            if op == "w" =>
+                        {
+                            store.insert(*key, TxnElement::USize(*value));
+                        }
+
                         _ => {}
                     }
                 }
-
-                self.msgs.insert(msg_id, txn.clone());
+                drop(store);
 
                 reply.body.payload = Payload::TxnOk {
                     msg_id: self.id,
-                    in_reply_to: msg_id,
-                    txn,
+                    in_reply_to: self.id,
+                    txn: txn.clone(),
                 };
                 reply.send(&mut *output).context("reply to txn")?;
             }
