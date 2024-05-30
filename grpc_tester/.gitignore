@@ -1,0 +1,5 @@
+# *.pb.go
+
+/bin
+
+go.sum

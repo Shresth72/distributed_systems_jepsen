@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package myservice.init;
+
+option go_package = "proto/unique_ids";
+
+service UniqueIdsService {
+  rpc SendUniqueIds(UniqueIdsRequest) returns (UniqueIdsResponse);
+}
+
+message UniqueIdsRequest {
+  string src = 1;
+  string dest = 2;
+  UniqueIdsRequestBody body = 3;
+}
+
+message UniqueIdsRequestBody { string type = 1; }
+
+message UniqueIdsResponse {
+  string src = 1;
+  string dest = 2;
+  UniqueIdsResponseBody body = 3;
+}
+
+message UniqueIdsResponseBody {
+  string type = 1;
+  int32 id = 2;
+}

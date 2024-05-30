@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+package myservice.init;
+
+option go_package = "proto/broadcast";
+
+service BroadcastService {
+  rpc SendBroadcast(BroadcastRequest) returns (BroadcastResponse);
+  rpc SendRead(ReadRequest) returns (ReadResponse);
+  rpc SendTopology(TopologyRequest) returns (TopologyResponse);
+}
+
+// Broadcast RPC
+message BroadcastRequest {
+  string src = 1;
+  string dest = 2;
+  BroadcastRequestBody body = 3;
+}
+
+message BroadcastRequestBody {
+  string type = 1;
+  int32 message = 2;
+}
+
+message BroadcastResponse {
+  string src = 1;
+  string dest = 2;
+  BroadcastResponseBody body = 3;
+}
+
+message BroadcastResponseBody { string type = 1; }
+
+// Read RPC
+message ReadRequest {
+  string src = 1;
+  string dest = 2;
+  ReadRequestBody body = 3;
+}
+
+message ReadRequestBody { string type = 1; }
+
+message ReadResponse {
+  string src = 1;
+  string dest = 2;
+  ReadResponseBody body = 3;
+}
+
+message ReadResponseBody {
+  string type = 1;
+  repeated int32 messages = 2;
+}
+
+// Topology RPC
+message TopologyRequest {
+  string src = 1;
+  string dest = 2;
+  TopologyRequestBody body = 3;
+}
+
+message TopologyRequestBody {
+  string type = 1;
+  map<string, Topology> topology = 2;
+}
+
+message Topology { repeated string neighbors = 1; }
+
+message TopologyResponse {
+  string src = 1;
+  string dest = 2;
+  TopologyResponseBody body = 3;
+}
+
+message TopologyResponseBody { string type = 1; }
