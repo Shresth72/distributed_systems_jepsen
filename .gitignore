@@ -1,2 +1,7 @@
 /target
 /store
+# *.pb.go
+
+/bin
+
+go.sum

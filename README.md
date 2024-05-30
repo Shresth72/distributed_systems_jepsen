@@ -134,4 +134,4 @@ cargo run --bin log_server
 
 Go follow him now, the best rust guy
 
-- John Gjenset - [Johnhoo](https://www.youtube.com/@jonhoo)
+- # John Gjenset - [Johnhoo](https://www.youtube.com/@jonhoo)
