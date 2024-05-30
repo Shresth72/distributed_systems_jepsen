@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package myservice.init;
+
+option go_package = "proto/init";
+
+service InitService {
+  rpc SendInit(InitRequest) returns (InitResponse);
+  rpc SetBinaryName(SetBinaryNameRequest) returns (SetBinaryNameResponse);
+}
+
+message InitRequest {
+  string src = 1;
+  string dest = 2;
+  InitRequestBody body = 3;
+}
+
+message InitRequestBody {
+  string type = 1;
+  string node_id = 2;
+  repeated string node_ids = 3;
+}
+
+message InitResponse {
+  string src = 1;
+  string dest = 2;
+  InitResponseBody body = 3;
+}
+
+message InitResponseBody {
+  int32 msg_id = 1;
+  optional string in_reply_to = 2;
+  string type = 3;
+}
+
+message SetBinaryNameRequest { string binary_name = 1; }
+
+message SetBinaryNameResponse {}
