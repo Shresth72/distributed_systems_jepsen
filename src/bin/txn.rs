@@ -29,6 +29,12 @@ enum Payload {
 }
 
 /*
+* network partition:  2  2n  70.44s user 10.20s system 190% cpu 42.384 total
+* without partition:  2  2n  68.57s user 11.85s system 198% cpu 40.499 total
+*
+ *** --consistency-models read-uncommitted:
+ - Specifies the consistency model for the test. read-uncommitted means that transactions can read data that has been written but not yet committed by other transactions. This allows for weaker consistency guarantees and is useful for testing systems that support eventual consistency.
+
  - Replaced Mutex with RwLock: We're now using a RwLock instead of a Mutex. This allows multiple readers to access the store simultaneously, which can improve performance in read-heavy scenarios.
 
  - Used parking_lot::RwLock: The parking_lot crate provides a more efficient implementation of RwLock than the standard library. This can lead to better performance under high concurrency.
