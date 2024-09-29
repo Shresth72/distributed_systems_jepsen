@@ -1,0 +1,5 @@
+Error: stdin thread err'd
+
+Caused by:
+    0: error deserializing input
+    1: missing field `msg_id` at line 1 column 114

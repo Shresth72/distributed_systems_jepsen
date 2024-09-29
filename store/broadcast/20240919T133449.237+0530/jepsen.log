@@ -1,0 +1,235 @@
+2024-09-19 13:34:49,280{GMT}	INFO	[jepsen test runner] jepsen.core: Test version 4f305f814c5875377301d630478a20a0e50c1df8
+2024-09-19 13:34:49,281{GMT}	INFO	[jepsen test runner] jepsen.core: Command line:
+lein run test -w broadcast --bin /home/shrestha/go/bin/maelstrom-broadcast --node-count 5 --time-limit 20 --rate 10 --nemesis partition
+2024-09-19 13:34:49,391{GMT}	INFO	[jepsen test runner] jepsen.core: Running test:
+{:args []
+ :remote
+ #jepsen.control.retry.Remote{:remote #jepsen.control.scp.Remote{:cmd-remote #jepsen.control.sshj.SSHJRemote{:concurrency-limit 6,
+                                                                                                             :conn-spec nil,
+                                                                                                             :client nil,
+                                                                                                             :semaphore nil},
+                                                                 :conn-spec nil},
+                              :conn nil}
+ :log-net-send false
+ :node-count 5
+ :availability nil
+ :max-txn-length 4
+ :concurrency 5
+ :db
+ #object[maelstrom.db$db$reify__16142
+         "0x9c88323"
+         "maelstrom.db$db$reify__16142@9c88323"]
+ :max-writes-per-key 16
+ :leave-db-running? false
+ :name "broadcast"
+ :logging-json? false
+ :start-time
+ #object[org.joda.time.DateTime "0x68f67bbd" "2024-09-19T13:34:49.237+05:30"]
+ :nemesis-interval 10
+ :net
+ #object[maelstrom.net$jepsen_net$reify__15251
+         "0x5bd585a5"
+         "maelstrom.net$jepsen_net$reify__15251@5bd585a5"]
+ :client
+ #object[maelstrom.workload.broadcast$client$reify__16644
+         "0x65c040c9"
+         "maelstrom.workload.broadcast$client$reify__16644@65c040c9"]
+ :barrier
+ #object[java.util.concurrent.CyclicBarrier
+         "0x11736ebc"
+         "java.util.concurrent.CyclicBarrier@11736ebc"]
+ :log-stderr false
+ :pure-generators true
+ :ssh {:dummy? true}
+ :rate 10.0
+ :checker
+ #object[jepsen.checker$compose$reify__11881
+         "0x4a03c4bc"
+         "jepsen.checker$compose$reify__11881@4a03c4bc"]
+ :argv
+ ("test"
+  "-w"
+  "broadcast"
+  "--bin"
+  "/home/shrestha/go/bin/maelstrom-broadcast"
+  "--node-count"
+  "5"
+  "--time-limit"
+  "20"
+  "--rate"
+  "10"
+  "--nemesis"
+  "partition")
+ :nemesis
+ (jepsen.nemesis.ReflCompose
+  {:fm {:start-partition 0,
+        :stop-partition 0,
+        :kill 1,
+        :start 1,
+        :pause 1,
+        :resume 1},
+   :nemeses [#unprintable "jepsen.nemesis.combined$partition_nemesis$reify__16416@3d0c88f4"
+             #unprintable "jepsen.nemesis.combined$db_nemesis$reify__16397@5aad4194"]})
+ :nodes ["n0" "n1" "n2" "n3" "n4"]
+ :test-count 1
+ :latency {:mean 0, :dist :constant}
+ :bin "/home/shrestha/go/bin/maelstrom-broadcast"
+ :generator
+ ((jepsen.generator.Synchronize
+   {:gen (jepsen.generator.TimeLimit
+          {:limit 20000000000,
+           :cutoff nil,
+           :gen (jepsen.generator.Any
+                 {:gens [(jepsen.generator.OnThreads
+                          {:f #{:nemesis},
+                           :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__9167
+                                                   "0x732ffb6a"
+                                                   "jepsen.generator.context$make_thread_filter$lazy_filter__9167@732ffb6a"],
+                           :gen (jepsen.generator.Stagger
+                                 {:dt 20000000000,
+                                  :next-time nil,
+                                  :gen (jepsen.generator.FlipFlop
+                                        {:gens [#object[jepsen.nemesis.combined$partition_package$start__16420
+                                                        "0x5ed83e36"
+                                                        "jepsen.nemesis.combined$partition_package$start__16420@5ed83e36"]
+                                                ({:type :info,
+                                                  :f :stop-partition,
+                                                  :value nil}
+                                                 {:type :info,
+                                                  :f :stop-partition,
+                                                  :value nil}
+                                                 {:type :info,
+                                                  :f :stop-partition,
+                                                  :value nil}
+                                                 {:type :info,
+                                                  :f :stop-partition,
+                                                  :value nil}
+                                                 {:type :info,
+                                                  :f :stop-partition,
+                                                  :value nil}
+                                                 {:type :info,
+                                                  :f :stop-partition,
+                                                  :value nil}
+                                                 {:type :info,
+                                                  :f :stop-partition,
+                                                  :value nil}
+                                                 {:type :info,
+                                                  :f :stop-partition,
+                                                  :value nil}
+                                                 ...)],
+                                         :i 0})})})
+                         (jepsen.generator.OnThreads
+                          {:f #jepsen.generator.context.AllBut{:element :nemesis},
+                           :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__9167
+                                                   "0x401e36ab"
+                                                   "jepsen.generator.context$make_thread_filter$lazy_filter__9167@401e36ab"],
+                           :gen (jepsen.generator.Stagger
+                                 {:dt 200000000,
+                                  :next-time nil,
+                                  :gen (jepsen.generator.Mix
+                                        {:i 1,
+                                         :gens [({:f :broadcast, :value 0}
+                                                 {:f :broadcast, :value 1}
+                                                 {:f :broadcast, :value 2}
+                                                 {:f :broadcast, :value 3}
+                                                 {:f :broadcast, :value 4}
+                                                 {:f :broadcast, :value 5}
+                                                 {:f :broadcast, :value 6}
+                                                 {:f :broadcast, :value 7}
+                                                 ...)
+                                                ({:f :read}
+                                                 {:f :read}
+                                                 {:f :read}
+                                                 {:f :read}
+                                                 {:f :read}
+                                                 {:f :read}
+                                                 {:f :read}
+                                                 {:f :read}
+                                                 ...)]})})})]})})})
+  (jepsen.generator.Synchronize
+   {:gen (jepsen.generator.OnThreads
+          {:f #{:nemesis},
+           :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__9167
+                                   "0x4ce66169"
+                                   "jepsen.generator.context$make_thread_filter$lazy_filter__9167@4ce66169"],
+           :gen ({:type :info, :f :stop-partition, :value nil})})})
+  (jepsen.generator.Synchronize
+   {:gen {:type :log, :value "Waiting for recovery..."}})
+  (jepsen.generator.Synchronize {:gen {:type :sleep, :value 10}})
+  (jepsen.generator.Synchronize
+   {:gen (jepsen.generator.OnThreads
+          {:f #jepsen.generator.context.AllBut{:element :nemesis},
+           :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__9167
+                                   "0x53d0cf4d"
+                                   "jepsen.generator.context$make_thread_filter$lazy_filter__9167@53d0cf4d"],
+           :gen (jepsen.generator.EachThread
+                 {:fresh-gen {:f :read, :final? true},
+                  :context-filters #object[clojure.core$promise$reify__8591
+                                           "0x3c6c87fa"
+                                           {:status :pending, :val nil}],
+                  :gens {}})})}))
+ :log-net-recv false
+ :os
+ #object[maelstrom.net$jepsen_os$reify__15254
+         "0xd7645b2"
+         "maelstrom.net$jepsen_os$reify__15254@d7645b2"]
+ :time-limit 20
+ :workload :broadcast
+ :consistency-models [:strict-serializable]
+ :topology :grid}
+
+2024-09-19 13:34:53,644{GMT}	INFO	[jepsen node n0] maelstrom.net: Starting Maelstrom network
+2024-09-19 13:34:53,647{GMT}	INFO	[jepsen test runner] jepsen.db: Tearing down DB
+2024-09-19 13:34:53,653{GMT}	INFO	[jepsen test runner] jepsen.db: Setting up DB
+2024-09-19 13:34:53,658{GMT}	INFO	[jepsen node n0] maelstrom.service: Starting services: (lin-kv lin-tso lww-kv seq-kv)
+2024-09-19 13:34:53,658{GMT}	INFO	[jepsen node n2] maelstrom.db: Setting up n2
+2024-09-19 13:34:53,658{GMT}	INFO	[jepsen node n1] maelstrom.db: Setting up n1
+2024-09-19 13:34:53,659{GMT}	INFO	[jepsen node n3] maelstrom.db: Setting up n3
+2024-09-19 13:34:53,659{GMT}	INFO	[jepsen node n4] maelstrom.db: Setting up n4
+2024-09-19 13:34:53,660{GMT}	INFO	[jepsen node n1] maelstrom.process: launching /home/shrestha/go/bin/maelstrom-broadcast []
+2024-09-19 13:34:53,660{GMT}	INFO	[jepsen node n3] maelstrom.process: launching /home/shrestha/go/bin/maelstrom-broadcast []
+2024-09-19 13:34:53,660{GMT}	INFO	[jepsen node n2] maelstrom.process: launching /home/shrestha/go/bin/maelstrom-broadcast []
+2024-09-19 13:34:53,660{GMT}	INFO	[jepsen node n4] maelstrom.process: launching /home/shrestha/go/bin/maelstrom-broadcast []
+2024-09-19 13:34:53,667{GMT}	INFO	[jepsen node n0] maelstrom.db: Setting up n0
+2024-09-19 13:34:53,668{GMT}	INFO	[jepsen node n0] maelstrom.process: launching /home/shrestha/go/bin/maelstrom-broadcast []
+2024-09-19 13:34:54,678{GMT}	INFO	[jepsen node n0] maelstrom.net: Shutting down Maelstrom network
+2024-09-19 13:34:54,683{GMT}	WARN	[jepsen test runner] jepsen.core: Test crashed!
+java.io.IOException: Cannot run program "/home/shrestha/go/bin/maelstrom-broadcast" (in directory "/tmp"): error=2, No such file or directory
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1143)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1073)
+	at maelstrom.process$start_node_BANG_.invokeStatic(process.clj:199)
+	at maelstrom.process$start_node_BANG_.invoke(process.clj:168)
+	at maelstrom.db$db$reify__16142.setup_BANG_(db.clj:34)
+	at jepsen.db$fn__8729$G__8723__8733.invoke(db.clj:12)
+	at jepsen.db$fn__8729$G__8722__8738.invoke(db.clj:12)
+	at clojure.core$partial$fn__5908.invoke(core.clj:2642)
+	at jepsen.control$on_nodes$fn__8599.invoke(control.clj:314)
+	at clojure.lang.AFn.applyToHelper(AFn.java:154)
+	at clojure.lang.AFn.applyTo(AFn.java:144)
+	at clojure.core$apply.invokeStatic(core.clj:667)
+	at clojure.core$with_bindings_STAR_.invokeStatic(core.clj:1990)
+	at clojure.core$with_bindings_STAR_.doInvoke(core.clj:1990)
+	at clojure.lang.RestFn.applyTo(RestFn.java:142)
+	at clojure.core$apply.invokeStatic(core.clj:671)
+	at clojure.core$bound_fn_STAR_$fn__5818.doInvoke(core.clj:2020)
+	at clojure.lang.RestFn.invoke(RestFn.java:408)
+	at dom_top.core$real_pmap_helper$build_thread__211$fn__212.invoke(core.clj:163)
+	at clojure.lang.AFn.applyToHelper(AFn.java:152)
+	at clojure.lang.AFn.applyTo(AFn.java:144)
+	at clojure.core$apply.invokeStatic(core.clj:667)
+	at clojure.core$with_bindings_STAR_.invokeStatic(core.clj:1990)
+	at clojure.core$with_bindings_STAR_.doInvoke(core.clj:1990)
+	at clojure.lang.RestFn.invoke(RestFn.java:425)
+	at clojure.lang.AFn.applyToHelper(AFn.java:156)
+	at clojure.lang.RestFn.applyTo(RestFn.java:132)
+	at clojure.core$apply.invokeStatic(core.clj:671)
+	at clojure.core$bound_fn_STAR_$fn__5818.doInvoke(core.clj:2020)
+	at clojure.lang.RestFn.invoke(RestFn.java:397)
+	at clojure.lang.AFn.run(AFn.java:22)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+Caused by: java.io.IOException: error=2, No such file or directory
+	at java.base/java.lang.ProcessImpl.forkAndExec(Native Method)
+	at java.base/java.lang.ProcessImpl.<init>(ProcessImpl.java:314)
+	at java.base/java.lang.ProcessImpl.start(ProcessImpl.java:244)
+	at java.base/java.lang.ProcessBuilder.start(ProcessBuilder.java:1110)
+	... 31 common frames omitted

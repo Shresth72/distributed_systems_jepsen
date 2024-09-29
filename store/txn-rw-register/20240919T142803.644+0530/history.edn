@@ -1,0 +1,16 @@
+{:index 0, :time 20720634, :type :invoke, :process 0, :f :txn, :value [[:r 7 nil] [:r 9 nil] [:w 7 1]]}
+{:index 1, :time 24037922, :type :invoke, :process 1, :f :txn, :value [[:w 9 1] [:w 7 2] [:r 9 nil] [:w 7 3]]}
+{:index 2, :time 5034124008, :type :info, :process 0, :f :txn, :value [[:r 7 nil] [:r 9 nil] [:w 7 1]], :error :net-timeout}
+{:index 3, :time 5034421482, :type :info, :process 1, :f :txn, :value [[:w 9 1] [:w 7 2] [:r 9 nil] [:w 7 3]], :error :net-timeout}
+{:index 4, :time 5034492266, :type :invoke, :process 2, :f :txn, :value [[:w 9 2] [:w 9 3] [:r 8 nil]]}
+{:index 5, :time 5036186899, :type :invoke, :process 3, :f :txn, :value [[:w 9 4] [:w 9 5] [:r 8 nil] [:r 9 nil]]}
+{:index 6, :time 10037743495, :type :info, :process 2, :f :txn, :value [[:w 9 2] [:w 9 3] [:r 8 nil]], :error :net-timeout}
+{:index 7, :time 10038182306, :type :info, :process 3, :f :txn, :value [[:w 9 4] [:w 9 5] [:r 8 nil] [:r 9 nil]], :error :net-timeout}
+{:index 8, :time 10038287815, :type :invoke, :process 5, :f :txn, :value [[:r 8 nil] [:w 9 6]]}
+{:index 9, :time 10039035333, :type :invoke, :process 4, :f :txn, :value [[:r 7 nil] [:w 3 1] [:w 5 1] [:w 9 7]]}
+{:index 10, :time 15040391475, :type :info, :process 4, :f :txn, :value [[:r 7 nil] [:w 3 1] [:w 5 1] [:w 9 7]], :error :net-timeout}
+{:index 11, :time 15040714031, :type :info, :process 5, :f :txn, :value [[:r 8 nil] [:w 9 6]], :error :net-timeout}
+{:index 12, :time 15040855226, :type :invoke, :process 6, :f :txn, :value [[:r 9 nil] [:r 8 nil] [:w 9 8] [:r 8 nil]]}
+{:index 13, :time 15043973225, :type :invoke, :process 7, :f :txn, :value [[:r 9 nil] [:w 8 1] [:w 8 2] [:r 8 nil]]}
+{:index 14, :time 20044128244, :type :info, :process 6, :f :txn, :value [[:r 9 nil] [:r 8 nil] [:w 9 8] [:r 8 nil]], :error :net-timeout}
+{:index 15, :time 20047759610, :type :info, :process 7, :f :txn, :value [[:r 9 nil] [:w 8 1] [:w 8 2] [:r 8 nil]], :error :net-timeout}

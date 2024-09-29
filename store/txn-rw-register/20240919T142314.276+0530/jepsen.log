@@ -1,0 +1,196 @@
+2024-09-19 14:23:14,310{GMT}	INFO	[jepsen test runner] jepsen.core: Test version 4f305f814c5875377301d630478a20a0e50c1df8 (plus uncommitted changes)
+2024-09-19 14:23:14,310{GMT}	INFO	[jepsen test runner] jepsen.core: Command line:
+lein run test -w txn-rw-register --bin ./target/debug/transactions --node-count 1 --time-limit 20 --rate 1000 --concurrency 2n --consistency-models read-uncommitted --availability total
+2024-09-19 14:23:14,428{GMT}	INFO	[jepsen test runner] jepsen.core: Running test:
+{:args []
+ :remote
+ #jepsen.control.retry.Remote{:remote #jepsen.control.scp.Remote{:cmd-remote #jepsen.control.sshj.SSHJRemote{:concurrency-limit 6,
+                                                                                                             :conn-spec nil,
+                                                                                                             :client nil,
+                                                                                                             :semaphore nil},
+                                                                 :conn-spec nil},
+                              :conn nil}
+ :log-net-send false
+ :node-count 1
+ :availability :total
+ :max-txn-length 4
+ :concurrency 2
+ :db
+ #object[maelstrom.db$db$reify__16142
+         "0x6d4bdb75"
+         "maelstrom.db$db$reify__16142@6d4bdb75"]
+ :max-writes-per-key 16
+ :leave-db-running? false
+ :name "txn-rw-register"
+ :logging-json? false
+ :start-time
+ #object[org.joda.time.DateTime "0x5bd585a5" "2024-09-19T14:23:14.276+05:30"]
+ :nemesis-interval 10
+ :net
+ #object[maelstrom.net$jepsen_net$reify__15251
+         "0x65c040c9"
+         "maelstrom.net$jepsen_net$reify__15251@65c040c9"]
+ :client
+ #object[maelstrom.workload.txn_rw_register$client$reify__20030
+         "0x11736ebc"
+         "maelstrom.workload.txn_rw_register$client$reify__20030@11736ebc"]
+ :barrier
+ #object[java.util.concurrent.CyclicBarrier
+         "0x4a03c4bc"
+         "java.util.concurrent.CyclicBarrier@4a03c4bc"]
+ :log-stderr false
+ :pure-generators true
+ :ssh {:dummy? true}
+ :rate 1000.0
+ :checker
+ #object[jepsen.checker$compose$reify__11881
+         "0x3d0c88f4"
+         "jepsen.checker$compose$reify__11881@3d0c88f4"]
+ :argv
+ ("test"
+  "-w"
+  "txn-rw-register"
+  "--bin"
+  "./target/debug/transactions"
+  "--node-count"
+  "1"
+  "--time-limit"
+  "20"
+  "--rate"
+  "1000"
+  "--concurrency"
+  "2n"
+  "--consistency-models"
+  "read-uncommitted"
+  "--availability"
+  "total")
+ :nemesis
+ (jepsen.nemesis.ReflCompose
+  {:fm {:start-partition 0,
+        :stop-partition 0,
+        :kill 1,
+        :start 1,
+        :pause 1,
+        :resume 1},
+   :nemeses [#unprintable "jepsen.nemesis.combined$partition_nemesis$reify__16416@5aad4194"
+             #unprintable "jepsen.nemesis.combined$db_nemesis$reify__16397@50a1c2f3"]})
+ :nodes ["n0"]
+ :test-count 1
+ :latency {:mean 0, :dist :constant}
+ :bin "./target/debug/transactions"
+ :generator
+ (jepsen.generator.TimeLimit
+  {:limit 20000000000,
+   :cutoff nil,
+   :gen (jepsen.generator.Any
+         {:gens [(jepsen.generator.OnThreads
+                  {:f #{:nemesis},
+                   :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__9167
+                                           "0x5ed83e36"
+                                           "jepsen.generator.context$make_thread_filter$lazy_filter__9167@5ed83e36"],
+                   :gen nil})
+                 (jepsen.generator.OnThreads
+                  {:f #jepsen.generator.context.AllBut{:element :nemesis},
+                   :context-filter #object[jepsen.generator.context$make_thread_filter$lazy_filter__9167
+                                           "0x2459715c"
+                                           "jepsen.generator.context$make_thread_filter$lazy_filter__9167@2459715c"],
+                   :gen (jepsen.generator.Stagger
+                         {:dt 2000000,
+                          :next-time nil,
+                          :gen ({:type :invoke,
+                                 :f :txn,
+                                 :value [[:w 8 1] [:r 6 nil]]}
+                                {:type :invoke,
+                                 :f :txn,
+                                 :value [[:r 9 nil] [:w 9 1]]}
+                                {:type :invoke, :f :txn, :value [[:w 8 2]]}
+                                {:type :invoke,
+                                 :f :txn,
+                                 :value [[:r 7 nil] [:w 9 2] [:r 8 nil]]}
+                                {:type :invoke,
+                                 :f :txn,
+                                 :value [[:w 9 3] [:w 9 4] [:w 8 3] [:w 9 5]]}
+                                {:type :invoke,
+                                 :f :txn,
+                                 :value [[:r 9 nil] [:w 9 6] [:w 9 7]]}
+                                {:type :invoke,
+                                 :f :txn,
+                                 :value [[:r 8 nil] [:w 9 8] [:r 9 nil]]}
+                                {:type :invoke,
+                                 :f :txn,
+                                 :value [[:w 9 9] [:w 6 1]]}
+                                ...)})})]})})
+ :log-net-recv false
+ :os
+ #object[maelstrom.net$jepsen_os$reify__15254
+         "0xe7b7395"
+         "maelstrom.net$jepsen_os$reify__15254@e7b7395"]
+ :time-limit 20
+ :workload :txn-rw-register
+ :consistency-models (:read-uncommitted)
+ :topology :grid}
+
+2024-09-19 14:23:16,971{GMT}	INFO	[jepsen node n0] maelstrom.net: Starting Maelstrom network
+2024-09-19 14:23:16,973{GMT}	INFO	[jepsen test runner] jepsen.db: Tearing down DB
+2024-09-19 14:23:16,976{GMT}	INFO	[jepsen test runner] jepsen.db: Setting up DB
+2024-09-19 14:23:16,980{GMT}	INFO	[jepsen node n0] maelstrom.service: Starting services: (lin-kv lin-tso lww-kv seq-kv)
+2024-09-19 14:23:16,985{GMT}	INFO	[jepsen node n0] maelstrom.db: Setting up n0
+2024-09-19 14:23:16,987{GMT}	INFO	[jepsen node n0] maelstrom.process: launching ./target/debug/transactions []
+2024-09-19 14:23:17,026{GMT}	INFO	[jepsen test runner] jepsen.core: Relative time begins now
+2024-09-19 14:23:17,046{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:invoke	:txn	[[:w 8 1] [:r 6 nil]]
+2024-09-19 14:23:17,046{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:invoke	:txn	[[:r 9 nil] [:w 9 1]]
+2024-09-19 14:23:22,055{GMT}	INFO	[jepsen worker 1] jepsen.util: 1	:info	:txn	[[:r 9 nil] [:w 9 1]]	:net-timeout
+2024-09-19 14:23:22,055{GMT}	INFO	[jepsen worker 0] jepsen.util: 0	:info	:txn	[[:w 8 1] [:r 6 nil]]	:net-timeout
+2024-09-19 14:23:22,056{GMT}	INFO	[jepsen worker 0] jepsen.util: 2	:invoke	:txn	[[:w 8 2]]
+2024-09-19 14:23:22,059{GMT}	INFO	[jepsen worker 1] jepsen.util: 3	:invoke	:txn	[[:r 7 nil] [:w 9 2] [:r 8 nil]]
+2024-09-19 14:23:27,057{GMT}	INFO	[jepsen worker 0] jepsen.util: 2	:info	:txn	[[:w 8 2]]	:net-timeout
+2024-09-19 14:23:27,058{GMT}	INFO	[jepsen worker 0] jepsen.util: 4	:invoke	:txn	[[:w 9 3] [:w 9 4] [:w 8 3] [:w 9 5]]
+2024-09-19 14:23:27,060{GMT}	INFO	[jepsen worker 1] jepsen.util: 3	:info	:txn	[[:r 7 nil] [:w 9 2] [:r 8 nil]]	:net-timeout
+2024-09-19 14:23:27,060{GMT}	INFO	[jepsen worker 1] jepsen.util: 5	:invoke	:txn	[[:r 9 nil] [:w 9 6] [:w 9 7]]
+2024-09-19 14:23:32,059{GMT}	INFO	[jepsen worker 0] jepsen.util: 4	:info	:txn	[[:w 9 3] [:w 9 4] [:w 8 3] [:w 9 5]]	:net-timeout
+2024-09-19 14:23:32,060{GMT}	INFO	[jepsen worker 0] jepsen.util: 6	:invoke	:txn	[[:r 8 nil] [:w 9 8] [:r 9 nil]]
+2024-09-19 14:23:32,060{GMT}	INFO	[jepsen worker 1] jepsen.util: 5	:info	:txn	[[:r 9 nil] [:w 9 6] [:w 9 7]]	:net-timeout
+2024-09-19 14:23:32,061{GMT}	INFO	[jepsen worker 1] jepsen.util: 7	:invoke	:txn	[[:w 9 9] [:w 6 1]]
+2024-09-19 14:23:37,066{GMT}	INFO	[jepsen worker 1] jepsen.util: 7	:info	:txn	[[:w 9 9] [:w 6 1]]	:net-timeout
+2024-09-19 14:23:37,067{GMT}	INFO	[jepsen worker 0] jepsen.util: 6	:info	:txn	[[:r 8 nil] [:w 9 8] [:r 9 nil]]	:net-timeout
+2024-09-19 14:23:37,119{GMT}	INFO	[jepsen test runner] jepsen.core: Run complete, writing
+2024-09-19 14:23:37,225{GMT}	INFO	[jepsen node n0] maelstrom.db: Tearing down n0
+2024-09-19 14:23:38,999{GMT}	INFO	[jepsen node n0] maelstrom.net: Shutting down Maelstrom network
+2024-09-19 14:23:39,000{GMT}	INFO	[jepsen test runner] jepsen.core: Analyzing...
+2024-09-19 14:23:39,078{GMT}	INFO	[jepsen test runner] jepsen.core: Analysis complete
+2024-09-19 14:23:39,094{GMT}	INFO	[jepsen results] jepsen.store: Wrote /home/shrestha/rust/distributed_systems/store/txn-rw-register/20240919T142314.276+0530/results.edn
+2024-09-19 14:23:39,105{GMT}	INFO	[jepsen test runner] jepsen.core: {:perf {:latency-graph {:valid? true},
+        :rate-graph {:valid? true},
+        :valid? true},
+ :timeline {:valid? true},
+ :exceptions {:valid? true},
+ :stats {:valid? false,
+         :count 8,
+         :ok-count 0,
+         :fail-count 0,
+         :info-count 8,
+         :by-f {:txn {:valid? false,
+                      :count 8,
+                      :ok-count 0,
+                      :fail-count 0,
+                      :info-count 8}}},
+ :availability {:valid? false, :ok-fraction 0.0},
+ :net {:all {:send-count 18,
+             :recv-count 18,
+             :msg-count 18,
+             :msgs-per-op 2.25},
+       :clients {:send-count 18, :recv-count 18, :msg-count 18},
+       :servers {:send-count 0,
+                 :recv-count 0,
+                 :msg-count 0,
+                 :msgs-per-op 0.0},
+       :valid? true},
+ :workload {:valid? false,
+            :anomaly-types (:empty-transaction-graph),
+            :anomalies {:empty-transaction-graph true},
+            :not #{},
+            :also-not #{}},
+ :valid? false}
+
+
+Analysis invalid! (ﾉಥ益ಥ）ﾉ ┻━┻
