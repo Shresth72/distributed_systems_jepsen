@@ -8,11 +8,10 @@ package librpc
 
 import (
 	"bytes"
+	"encoding/gob"
 	"log"
 	"reflect"
-	"sync"
-
-	"github.com/Shresth72/raft/pkg/libgob"
+	// "github.com/Shresth72/raft/pkg/libgob"
 )
 
 type reqMsg struct {
@@ -44,7 +43,7 @@ func (e *ClientEnd) Call(svcMeth string, args interface{}, reply interface{}) bo
 	req.replyCh = make(chan replyMsg)
 
 	qb := new(bytes.Buffer)
-	qe := libgob.NewEncoder(qb)
+	qe := gob.NewEncoder(qb)
 	qe.Encode(args)
 	req.args = qb.Bytes()
 
@@ -61,7 +60,7 @@ func (e *ClientEnd) Call(svcMeth string, args interface{}, reply interface{}) bo
 	rep := <-req.replyCh
 	if rep.ok {
 		rb := bytes.NewBuffer(rep.reply)
-		rd := libgob.NewDecoder(rb)
+		rd := gob.NewDecoder(rb)
 		if err := rd.Decode(reply); err != nil {
 			log.Fatalf("ClientEnd.Call(): decode reply: %v\n", err)
 		}

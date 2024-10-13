@@ -2,12 +2,12 @@ package librpc
 
 import (
 	"bytes"
+	"encoding/gob"
 	"log"
 	"reflect"
 	"strings"
 	"sync"
-
-	"github.com/Shresth72/raft/pkg/libgob"
+	// "github.com/Shresth72/raft/pkg/libgob"
 )
 
 // a server is a collection of services, all sharing
@@ -112,7 +112,7 @@ func (svc *Service) dispatch(methname string, req reqMsg) replyMsg {
 
 		// decode the argument.
 		ab := bytes.NewBuffer(req.args)
-		ad := libgob.NewDecoder(ab)
+		ad := gob.NewDecoder(ab)
 		ad.Decode(args.Interface())
 
 		// allocate space for the reply.
@@ -126,7 +126,7 @@ func (svc *Service) dispatch(methname string, req reqMsg) replyMsg {
 
 		// encode the reply.
 		rb := new(bytes.Buffer)
-		re := libgob.NewEncoder(rb)
+		re := gob.NewEncoder(rb)
 		re.EncodeValue(replyv)
 
 		return replyMsg{true, rb.Bytes()}
