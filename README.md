@@ -1,4 +1,4 @@
-<h1 align="">Jepsen Based Distributed Systems Implementation</h1>
+<h1 align="">Jepsen Based Distributed Systems Node Implementation</h1>
 <!--
 <p align="center">
   <a href="" rel="noopener">
